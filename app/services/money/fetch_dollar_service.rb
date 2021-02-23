@@ -1,10 +1,10 @@
-class FetchDollarService < BusinessProcess::Base
+class Money::FetchDollarService < BusinessProcess::Base
   include ActionView::Helpers::NumberHelper
 
   URL = 'https://economia.awesomeapi.com.br/json/all/USD-BRL'
 
   steps :index,
-        :get_dollar_value,
+        :dollar_value,
         :format_dollar_value,
         :call_pokeapi
 
@@ -17,7 +17,7 @@ class FetchDollarService < BusinessProcess::Base
     @result = RestClient.get(URL)
   end
 
-  def get_dollar_value
+  def dollar_value
     parsed_json = JSON.parse(@result)
     @dollar = parsed_json['USD']['bid']
   end
@@ -27,7 +27,7 @@ class FetchDollarService < BusinessProcess::Base
   end
 
   def call_pokeapi
-    service = FetchPokeapiService.call(dollar_value: @formatted_dollar)
+    service = Pokemon::FetchPokeapiService.call(dollar_value: @formatted_dollar)
 
     @pokemon = service.result
   end
