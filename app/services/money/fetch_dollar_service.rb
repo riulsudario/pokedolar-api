@@ -23,7 +23,9 @@ class Money::FetchDollarService < BusinessProcess::Base
   end
 
   def format_dollar_value
-    @formatted_dollar = number_to_human(@dollar).tr('.', '')
+    dollar = number_to_human(@dollar)
+    dollar = number_with_precision(dollar, precision: 2)
+    @formatted_dollar = dollar.tr('.', '')
   end
 
   def call_pokeapi
