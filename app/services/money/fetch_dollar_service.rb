@@ -25,7 +25,7 @@ class Money::FetchDollarService < BusinessProcess::Base
 
   def format_dollar_value
     @rounded_dollar = number_to_human(@dollar)
-    dollar = number_with_precision(@rounded_dollar, precision: 2)
+    @dollar = number_with_precision(@rounded_dollar, precision: 2)
     @formatted_dollar = dollar.tr('.', '')
   end
 
@@ -33,7 +33,7 @@ class Money::FetchDollarService < BusinessProcess::Base
     @dollar_obj = {
       pokemon_id: @formatted_dollar,
       dollar: {
-        value: @rounded_dollar,
+        value: @dollar,
         percentage_change: @parsed_json['USD']['pctChange'].to_f,
         positive: @parsed_json['USD']['pctChange'].to_f.positive?
       }
