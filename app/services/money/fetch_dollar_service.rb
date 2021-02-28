@@ -26,7 +26,7 @@ class Money::FetchDollarService < BusinessProcess::Base
   def format_dollar_value
     @rounded_dollar = number_to_human(@dollar)
     @dollar = number_with_precision(@rounded_dollar, precision: 2)
-    @formatted_dollar = dollar.tr('.', '')
+    @formatted_dollar = @dollar.tr('.', '')
   end
 
   def mount_dollar
