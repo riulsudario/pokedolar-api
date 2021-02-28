@@ -6,6 +6,7 @@ class Money::FetchDollarService < BusinessProcess::Base
   steps :index,
         :dollar_value,
         :format_dollar_value,
+        :mount_dollar,
         :call_pokeapi
 
   def call
@@ -18,18 +19,29 @@ class Money::FetchDollarService < BusinessProcess::Base
   end
 
   def dollar_value
-    parsed_json = JSON.parse(@result)
-    @dollar = parsed_json['USD']['bid']
+    @parsed_json = JSON.parse(@result)
+    @dollar = @parsed_json['USD']['bid']
   end
 
   def format_dollar_value
-    dollar = number_to_human(@dollar)
-    dollar = number_with_precision(dollar, precision: 2)
+    @rounded_dollar = number_to_human(@dollar)
+    dollar = number_with_precision(@rounded_dollar, precision: 2)
     @formatted_dollar = dollar.tr('.', '')
   end
 
+  def mount_dollar
+    @dollar_obj = {
+      pokemon_id: @formatted_dollar,
+      dollar: {
+        value: @rounded_dollar,
+        percentage_change: @parsed_json['USD']['pctChange'].to_f,
+        positive: @parsed_json['USD']['pctChange'].to_f.positive?
+      }
+    }
+  end
+
   def call_pokeapi
-    service = Pokemon::FetchPokeapiService.call(dollar_value: @formatted_dollar)
+    service = Pokemon::FetchPokeapiService.call(dollar_obj: @dollar_obj)
 
     @pokemon = service.result
   end

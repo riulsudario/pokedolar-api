@@ -2,6 +2,7 @@ class Pokemon::MountPokemonService < BusinessProcess::Base
   STEPS = 5
 
   needs :pokemon
+  needs :dollar_obj
 
   steps :init_variables,
         :mount_abilities,
@@ -26,7 +27,7 @@ class Pokemon::MountPokemonService < BusinessProcess::Base
   def mount_abilities
     @abilities = pokemon['abilities'].map do |ability|
       {
-        name: ability['ability']['name'],
+        name: ability['ability']['name'].humanize,
         url: ability['ability']['url'],
         hidden: ability['is_hidden'],
         slot: ability['slot']
@@ -65,7 +66,8 @@ class Pokemon::MountPokemonService < BusinessProcess::Base
         stats: @stats,
         max_base_stat: @max_base_stat,
         step_size: @max_base_stat / STEPS
-      }
+      },
+      dollar: dollar_obj[:dollar]
     }
   end
 end
